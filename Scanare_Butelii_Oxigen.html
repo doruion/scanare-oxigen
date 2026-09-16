@@ -214,8 +214,19 @@ function buclaDetectieNativa(){
   }, 350);
 }
 
+// Doar formate liniare de pe etichetele buteliilor — exclude explicit QR,
+// ca să nu mai citească inconsistent între un cod de bare și un QR alăturat.
+var FORMATE_NATIVE = ['ean_13','ean_8','code_128','code_39'];
+
 function porneseZXing(){
-  zxingReader = new ZXing.BrowserMultiFormatReader();
+  var hints = new Map();
+  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
+    ZXing.BarcodeFormat.EAN_13,
+    ZXing.BarcodeFormat.EAN_8,
+    ZXing.BarcodeFormat.CODE_128,
+    ZXing.BarcodeFormat.CODE_39
+  ]);
+  zxingReader = new ZXing.BrowserMultiFormatReader(hints);
   zxingReader.decodeFromConstraints(
     { video: { facingMode: { ideal: 'environment' } } },
     'video',
@@ -228,8 +239,9 @@ function porneseCamera(){
   var gata = Promise.resolve();
   if('BarcodeDetector' in window){
     gata = window.BarcodeDetector.getSupportedFormats().then(function(formate){
-      if(formate && formate.length){
-        detector = new window.BarcodeDetector({formats: formate});
+      var acceptate = FORMATE_NATIVE.filter(function(f){ return formate.indexOf(f) !== -1; });
+      if(acceptate.length){
+        detector = new window.BarcodeDetector({formats: acceptate});
         foloseNativ = true;
       }
     }).catch(function(){});
