@@ -1,5 +1,5 @@
-const CACHE = 'oxigen-scanare-v1';
-const ASSETS = ['./Scanare_Butelii_Oxigen.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'oxigen-scanare-v2';
+const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }));
